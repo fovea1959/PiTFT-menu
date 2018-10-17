@@ -1,7 +1,20 @@
 {
 	"layout": "vertical",
 	"buttons": [
-		{ "text": "Fetch from camera" , "cmd": "fetch.sh" },
-		{ "text": "Push to synology", "cmd": "push.sh" }
-	]
+		{ "text": "Fetch from camera" , "cmd": "fetch.sh", "style": "f" },
+		{ "text": "Push to synology", "cmd": "push.sh", "style": "p" },
+		{ "text": "Exit", "cmd": "exit" }
+	],
+	"styles": {
+		"f": {
+	       		"normal": {"color": "dodgerblue1"},
+	       		"hover": {"color": "lightskyblue"},
+	       		"down": {"color": "aquamarine1"}
+		},
+		"p": {
+	       		"normal": {"color": "#ff0000"},
+	       		"hover": {"color": "#00ff00"},
+	       		"down": {"color": "#0000ff"}
+		}
+	}
 }

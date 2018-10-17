@@ -6,6 +6,16 @@ import pygame as pg
 import os
 import logging
 
+def rgb (s):
+    if s.startswith('#'):
+        # from John1024's answer in https://stackoverflow.com/questions/29643352/converting-hex-to-rgb-value-in-python
+        rv = tuple(int(s.lstrip('#')[i:i+2], 16) for i in (0, 2 ,4))
+    else:
+        rv = pg.Color(s)
+
+    logging.debug ('Converted %s to %s', s, rv)
+    return rv
+
 # Button is a sprite subclass, that means it can be added to a sprite group.
 # You can draw and update all sprites in a group by
 # calling `group.update()` and `group.draw(screen)`.
@@ -84,12 +94,6 @@ class Game:
         logging.info ("starts = %s", starts)
 
         FONT = pg.font.SysFont('Comic Sans MS', 32)
-        IMAGE_NORMAL = pg.Surface((100, 32))
-        IMAGE_NORMAL.fill(pg.Color('dodgerblue1'))
-        IMAGE_HOVER = pg.Surface((100, 32))
-        IMAGE_HOVER.fill(pg.Color('lightskyblue'))
-        IMAGE_DOWN = pg.Surface((100, 32))
-        IMAGE_DOWN.fill(pg.Color('aquamarine1'))
 
         for i in range(0, len(buttons)):
             button = buttons[i]
@@ -104,11 +108,35 @@ class Game:
                 y = 0
                 h = self.height
 
+            image_normal = self.makesurface (button, data, 'normal', 'dodgerblue1')
+            image_hover = self.makesurface (button, data, 'hover', 'lightskyblue')
+            image_down = self.makesurface (button, data, 'down', 'aquamarine')
+
             pg_button = Button(
                 x, y, w, h, self.button_clicked,
                 FONT, button.get('text', 'unknown text'), (255, 255, 255),
-                IMAGE_NORMAL, IMAGE_HOVER, IMAGE_DOWN, callback_arg=button)
+                image_normal, image_hover, image_down, callback_arg=button)
             self.all_sprites.add(pg_button)
+
+    def makesurface (self, button, data, whichstate, defaultcolor):
+        color = defaultcolor
+        style_name = button.get('style', None)
+        if style_name is not None:
+            style = data.get('styles', {}).get(style_name,None)
+            if style is not None:
+                state = style.get(whichstate, None)
+                if state is None:
+                    logging.warn ('cannot find state "%s" in style %s for button %s', whichstate, style, button)
+                else:
+                    color = state.get('color', None)
+                    if color is None:
+                        logging.warn ('cannot find "color" in state %s for style %s for button %s', state, style, button)
+                        color = defaultcolor
+            else:
+                logging.warn ('cannot find style %s for button %s', style_name, button)
+        rv = pg.Surface((100, 32))
+        rv.fill(rgb(color))
+        return rv
 
     def get_screen(self):
         "Ininitializes a new pygame screen using the framebuffer"
