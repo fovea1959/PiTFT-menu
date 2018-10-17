@@ -1,0 +1,7 @@
+{
+	"layout": "horizontal",
+	"buttons": [
+		{ "text": "fetch" },
+		{ "text": "push" }
+	]
+}
