@@ -6,6 +6,9 @@ import pygame as pg
 import os
 import logging
 
+def factors(n):    
+    return [(i, n//i) for i in range(1, int(n**0.5) + 1) if n % i == 0]
+
 def rgb (s):
     if s.startswith('#'):
         # from John1024's answer in https://stackoverflow.com/questions/29643352/converting-hex-to-rgb-value-in-python
@@ -80,33 +83,44 @@ class Game:
         self.number = 0
         pg.mouse.set_visible(False)
 
-        s_layout = data.get('layout', 'h')
         buttons = data.get('buttons', [])
+        n_buttons = len(buttons)
 
-        starts = [0]
+        s_layout = data.get('layout', '2d')
         if s_layout.startswith('v'):
-            interval = self.height / float(len(buttons))
+            n_rows = n_buttons
+            n_columns = 1
+        elif s_layout.startswith('h'):
+            n_rows = 1
+            n_columns = n_buttons
         else:
-            interval = self.width / float(len(buttons))
-        for i in range(0, len(buttons)):
-            start = int ((i+1)*interval)
-            starts.append(start)
-        logging.info ("starts = %s", starts)
+            # 2d layout
+            f = factors(n_buttons)
+            if len(f) == 1 and n_button > 4:
+                f = factors(n_buttons+1)
+            (n_rows, n_columns) = f[-1]
+
+        x_starts = [0]
+        y_starts = [0]
+        x_interval = self.width // n_columns
+        y_interval = self.height // n_rows
+        for i in range(0, n_columns):
+            start = int ((i+1)*x_interval)
+            x_starts.append(start)
+        for i in range(0, n_rows):
+            start = int ((i+1)*y_interval)
+            y_starts.append(start)
 
         FONT = pg.font.SysFont('Comic Sans MS', 32)
 
         for i in range(0, len(buttons)):
             button = buttons[i]
-            if s_layout.startswith('v'):
-                x = 0
-                w = self.width
-                y = starts[i]
-                h = starts[i+1] - starts[i]
-            else:
-                x = starts[i]
-                w = starts[i+1] - starts[i]
-                y = 0
-                h = self.height
+            x_index = i % n_columns
+            y_index = i // n_columns
+            x = x_starts[x_index]
+            w = x_starts[x_index+1] - x
+            y = y_starts[y_index]
+            h = y_starts[y_index+1] - y
 
             image_normal = self.makesurface (button, data, 'normal', 'dodgerblue1')
             image_hover = self.makesurface (button, data, 'hover', 'lightskyblue')
