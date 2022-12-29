@@ -1,10 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
-import pygame as pg
 import os
 import logging
+
+# https://stackoverflow.com/a/54247065
+from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+import pygame as pg
 
 def factors(n):    
     return [(i, n//i) for i in range(1, int(n**0.5) + 1) if n % i == 0]
@@ -30,9 +34,9 @@ class Button(pg.sprite.Sprite):
                  image_down=None,
                  callback_arg=None,
                  ):
-        #super().__init__()
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
         logging.info ("Button %s x=%d y=%d width=%d height=%d" % (text, x, y, width, height))
+        self.text = text
         # Scale the images to the desired size (doesn't modify the originals).
         self.image_normal = pg.transform.scale(image_normal, (width, height))
         self.image_hover = pg.transform.scale(image_hover, (width, height))
@@ -54,13 +58,16 @@ class Button(pg.sprite.Sprite):
         self.button_down = False
 
     def handle_event(self, event):
+        logging.info ("%s got event, type=%s, pos=%s", self.text, event.type, event.pos)
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
+                logging.info ("%s button down", self.text)
                 self.image = self.image_down
                 self.button_down = True
         elif event.type == pg.MOUSEBUTTONUP:
             # If the rect collides with the mouse pos.
             if self.rect.collidepoint(event.pos) and self.button_down:
+                logging.info ("%s button up", self.text)
                 self.callback(self.callback_arg)  # Call the function.
                 self.image = self.image_hover
             self.button_down = False
@@ -195,9 +202,10 @@ class Game:
             pg.display.update()
 
     def button_clicked(self, a):
-        logging.info ('button clicked = %s', str(a))
-        print a.get('cmd', a.get('text', str(a)))
-        self.done = True
+        if not self.done:
+            logging.info ('button clicked = %s', str(a))
+            print(a.get('cmd', a.get('text', str(a))))
+            self.done = True
 
     def run(self):
         while not self.done:
@@ -207,11 +215,15 @@ class Game:
             self.draw()
 
     def handle_events(self):
+        got_some = False
         for event in pg.event.get():
+            got_some = True
             if event.type == pg.QUIT:
                 self.done = True
             for button in self.all_sprites:
                 button.handle_event(event)
+        if got_some:
+            logging.info ('==== end of event batch ====')
 
     def run_logic(self):
         self.all_sprites.update(self.dt)
@@ -230,7 +242,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="input file")
-    parser.add_argument("-v", "--verbosity", type=int, help="increase output verbosity")
+    parser.add_argument("-v", "--verbosity", default=0, action="count", help="increase output verbosity")
                 
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO if args.verbosity < 1 else logging.DEBUG)

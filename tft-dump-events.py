@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4 fileencoding=latin-1
 
 # from https://stackoverflow.com/questions/5060710/format-of-dev-input-event
