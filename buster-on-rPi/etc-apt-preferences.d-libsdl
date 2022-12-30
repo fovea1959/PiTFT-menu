@@ -1,0 +1,24 @@
+Package: libsdl1.2debian
+Pin: release n=buster
+Pin-Priority: -10
+Package: libsdl1.2debian
+Pin: release n=wheezy
+Pin-Priority: 900
+Package: libsdl-ttf2.0-0
+Pin: release n=buster
+Pin-Priority: -10
+Package: libsdl-ttf2.0-0
+Pin: release n=wheezy
+Pin-Priority: 900
+Package: libts-dev
+Pin: release n=buster
+Pin-Priority: -10
+Package: libts-dev
+Pin: release n=wheezy
+Pin-Priority: 900
+Package: libsdl1.2-dev
+Pin: release n=buster
+Pin-Priority: -10
+Package: libsdl1.2-dev
+Pin: release n=wheezy
+Pin-Priority: 900

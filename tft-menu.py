@@ -58,7 +58,7 @@ class Button(pg.sprite.Sprite):
         self.button_down = False
 
     def handle_event(self, event):
-        logging.info ("%s got event, type=%s, pos=%s", self.text, event.type, event.pos)
+        logging.debug("%s got event, type=%s, pos=%s", self.text, event.type, event.pos)
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 logging.info ("%s button down", self.text)
@@ -223,7 +223,7 @@ class Game:
             for button in self.all_sprites:
                 button.handle_event(event)
         if got_some:
-            logging.info ('==== end of event batch ====')
+            logging.debug('==== end of event batch ====')
 
     def run_logic(self):
         self.all_sprites.update(self.dt)
