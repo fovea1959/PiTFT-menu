@@ -2,8 +2,8 @@
 	"layout": "2d",
 	"buttons": [
 		{ "text": "iwconfig" , "cmd": "iwconfig.py", "style": "mono" },
-		{ "text": "Fetch" , "cmd": "fetch.sh" },
-		{ "text": "Push", "cmd": "push.sh" },
+		{ "text": "ls", "cmd": "ls" },
+		{ "text": "df", "cmd": "df" },
 		{ "text": "Exit", "cmd": "exit", "style": "p" }
 	],
 	"styles": {

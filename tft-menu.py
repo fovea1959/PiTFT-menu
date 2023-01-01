@@ -58,7 +58,8 @@ class Button(pg.sprite.Sprite):
         self.button_down = False
 
     def handle_event(self, event):
-        logging.debug("%s got event, type=%s, pos=%s", self.text, event.type, event.pos)
+        pos = getattr(event, "pos", None)
+        logging.debug("%s got event, type=%s, pos=%s", self.text, event.type, pos)
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 logging.info ("%s button down", self.text)
